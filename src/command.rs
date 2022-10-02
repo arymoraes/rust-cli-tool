@@ -22,6 +22,8 @@ pub fn add_command(alias: &str, command: &str) -> Result<()> {
         (),
     )?;
 
+    println!("{}", command);
+
     let command_exists = get_command(alias);
 
     if command_exists.is_none() {
@@ -87,10 +89,20 @@ pub fn run_command(alias: &str) -> Result<()> {
         "Running command".cyan(),
         &command.command.bright_green()
     );
-    std::process::Command::new("cmd")
-        .args(["/C", &command.command])
-        .output()
-        .unwrap();
+
+    if cfg!(target_os = "windows") {
+        std::process::Command::new("cmd")
+            .args(["/C", &command.command])
+            .output()
+            .unwrap();
+    } else {
+        std::process::Command::new("sh")
+            .arg("-c")
+            .arg(&command.command)
+            .spawn()
+            .expect("failed to execute process");
+    }
+
     return Ok(());
 }
 

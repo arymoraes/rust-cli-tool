@@ -8,9 +8,12 @@ fn main() {
 
     if pattern == Some(String::from("add")) {
         let alias = std::env::args().nth(2).unwrap();
-        // command is everything that comes after the alias:
         let command = std::env::args().skip(3).collect::<Vec<_>>().join(" ");
+
+        println!("{}", command);
+
         command::add_command(&alias, &command).unwrap();
+
         return;
     }
 
